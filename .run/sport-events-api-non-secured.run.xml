@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="sport-events-api-non-secured" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" folderName="spring-boot">
+    <envs>
+      <env name="DEFAULT_AUDIT_EDITOR_SOURCE" value="sport-events-api-non-secured" />
+    </envs>
+    <module name="sport-events-api" />
+    <option name="SPRING_BOOT_MAIN_CLASS" value="org.example.sporteventsapi.Application" />
+    <option name="VM_PARAMETERS" value="-Dspring.profiles.active=non-secured -Dserver.port=8090" />
+  </configuration>
+</component>

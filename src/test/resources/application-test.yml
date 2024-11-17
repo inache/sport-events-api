@@ -1,0 +1,4 @@
+logging:
+level:
+  org.springframework: ERROR    # This suppresses debug/info logs from Spring
+  org.example.sporteventsapi: INFO # This will only show INFO logs or higher for your application

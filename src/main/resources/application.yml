@@ -1,0 +1,28 @@
+server:
+  port: 8090
+  error:
+    path: /error
+  servlet:
+    context-path: /api
+
+spring:
+  application:
+    name: sport-events-api
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: update  # 'update' will create missing tables, 'create-drop' will recreate on each start
+    show-sql: true  # Show SQL queries in the logs (optional)
+  profiles:
+    active: secured
+
+  h2:
+    console:
+      enabled: true  # Enable the H2 web console for debugging
+
+# Set active profile for default (you can change this profile as needed)
+#spring
+#  profiles.active: non-secured  # Use 'secured' or 'non-secured' profile here
