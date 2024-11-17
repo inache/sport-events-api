@@ -11,19 +11,20 @@ import java.time.LocalDateTime;
 @Table(name = "sport_events")
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class SportEvent extends BaseEntity {
 
     @Column(name = "name")
     private String name;
 
-    @Enumerated(EnumType.STRING) // Store enum as a string in the database
-    @Column(name = "type")
-    private SportType type;
+    @Column(name = "sport_type")
+    @Enumerated(EnumType.STRING)
+    private SportType sportType;
 
-    @Enumerated(EnumType.STRING) // Store enum as a string in the database
-    @Column(name = "status")
-    private SportEventStatus status;
+    @Column(name = "event_status")
+    @Enumerated(EnumType.STRING)
+    private SportEventStatus eventStatus;
 
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
+    @Column(name = "start_time", columnDefinition = "TIMESTAMP")
+    private LocalDateTime startTime;
 }

@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="sport-events-api" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" folderName="spring-boot">
+    <envs>
+      <env name="DEFAULT_AUDIT_EDITOR_SOURCE" value="sport-events-api" />
+    </envs>
+    <module name="sport-events-api" />
+    <option name="SPRING_BOOT_MAIN_CLASS" value="org.example.sporteventsapi.Application" />
+    <option name="VM_PARAMETERS" value="--Dserver.port=8090" />
+  </configuration>
+</component>

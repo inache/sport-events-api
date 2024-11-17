@@ -8,11 +8,8 @@ import static org.hamcrest.Matchers.is;
 
 @SpringBootTest(classes = {Application.class})
 class ApplicationTests {
-
     @Test
     void testApplicationStartup() {
-        // No exceptions thrown
         assertThat(true, is(true));
     }
-
 }

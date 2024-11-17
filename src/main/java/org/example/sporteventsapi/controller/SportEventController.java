@@ -7,8 +7,8 @@ import org.example.sporteventsapi.model.SportEventStatus;
 import org.example.sporteventsapi.model.SportType;
 import org.example.sporteventsapi.service.SportEventService;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -33,7 +33,7 @@ public class SportEventController {
     }
 
     @PostMapping
-    public ResponseEntity<SportEventDTO> createSportEvent(@RequestBody SportEventDTO sportEventDTO) {
+    public ResponseEntity<SportEventDTO> createSportEvent(@Validated @RequestBody SportEventDTO sportEventDTO) {
         return ResponseEntity.status(HttpStatus.CREATED).body(this.service.createSportEvent(sportEventDTO));
     }
 }

@@ -14,15 +14,9 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
-      ddl-auto: update  # 'update' will create missing tables, 'create-drop' will recreate on each start
-    show-sql: true  # Show SQL queries in the logs (optional)
-  profiles:
-    active: secured
-
+      ddl-auto: update
+    show-sql: true
   h2:
     console:
-      enabled: true  # Enable the H2 web console for debugging
-
-# Set active profile for default (you can change this profile as needed)
-#spring
-#  profiles.active: non-secured  # Use 'secured' or 'non-secured' profile here
+      enabled: true
+      path: /h2-console
