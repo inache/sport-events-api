@@ -1,13 +1,15 @@
 package org.example.sporteventsapi.exception;
 
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -48,6 +50,19 @@ public class ControllerExceptionHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler({
+            InvalidStatusChangeException.class,
+            InvalidFormatException.class,
+            IllegalStateException.class,
+            HttpMessageNotReadableException.class
+    })
+    public ResponseEntity<Map<String, Object>> handleExceptions(Exception exception) {
+        logError(exception);
+        var errorResponse = buildErrorResponse("Invalid Request", HttpStatus.BAD_REQUEST, exception.getMessage());
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, Object>> handleException(Exception exception) {
         logError(exception);
@@ -61,7 +76,7 @@ public class ControllerExceptionHandler {
     }
 
     private Map<String, Object> buildErrorResponse(String title, HttpStatus status, String detail) {
-        Map<String, Object> errorResponse = new HashMap<>();
+        Map<String, Object> errorResponse = new LinkedHashMap<>();
         errorResponse.put("title", title);
         errorResponse.put("status", status.value());
         errorResponse.put("detail", detail);

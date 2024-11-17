@@ -5,6 +5,6 @@
     </envs>
     <module name="sport-events-api" />
     <option name="SPRING_BOOT_MAIN_CLASS" value="org.example.sporteventsapi.Application" />
-    <option name="VM_PARAMETERS" value="--Dserver.port=8090" />
+    <option name="VM_PARAMETERS" value="-Dserver.port=8090" />
   </configuration>
 </component>

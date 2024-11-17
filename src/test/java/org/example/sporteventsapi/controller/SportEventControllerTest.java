@@ -4,11 +4,13 @@ import lombok.SneakyThrows;
 import org.example.sporteventsapi.AbstractJPAMockTest;
 import org.example.sporteventsapi.Application;
 import org.example.sporteventsapi.dto.SportEventDTO;
+import org.example.sporteventsapi.model.SportEvent;
 import org.example.sporteventsapi.model.SportEventStatus;
 import org.example.sporteventsapi.model.SportType;
 import org.example.sporteventsapi.service.SportEventService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
@@ -21,8 +23,7 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -160,19 +161,19 @@ class SportEventControllerTest extends AbstractJPAMockTest {
     @SneakyThrows
     @DisplayName("Verifying POST /sport-events HTTP request matching")
     void addSportEvent() {
-        //Arrange
+        // Arrange
         var sportEvent = new SportEventDTO(
                 null,
                 "test",
                 SportType.FOOTBALL,
                 SportEventStatus.ACTIVE,
-                LocalDateTime.of(2024, 11, 16, 15, 30, 45));
+                LocalDateTime.of(2025, 11, 16, 15, 30, 45));
         when(sportEventService.createSportEvent(sportEvent)).thenReturn(new SportEventDTO(
                 1L,
                 "test",
                 SportType.FOOTBALL,
                 SportEventStatus.ACTIVE,
-                LocalDateTime.of(2024, 11, 16, 15, 30, 45)));
+                LocalDateTime.of(2025, 11, 16, 15, 30, 45)));
 
         // Act & Assert
         mockMvc.perform(post("/sport-events")
@@ -182,8 +183,32 @@ class SportEventControllerTest extends AbstractJPAMockTest {
                 .andExpect(jsonPath("$.id", is(1)))
                 .andExpect(jsonPath("$.sportType", is(SportType.FOOTBALL.name())))
                 .andExpect(jsonPath("$.eventStatus", is(SportEventStatus.ACTIVE.name())))
-                .andExpect(jsonPath("$.startTime", is(LocalDateTime.of(2024, 11, 16, 15, 30, 45).toString())));
+                .andExpect(jsonPath("$.startTime", is(LocalDateTime.of(2025, 11, 16, 15, 30, 45).toString())));
 
         verify(sportEventService).createSportEvent(sportEvent);
+    }
+
+    @Test
+    @SneakyThrows
+    @DisplayName("Verifying PATCH /sport-events/{id}/status with valid transition from INACTIVE to ACTIVE")
+    void testUpdateSportEventStatusFromInactiveToActive() {
+        // Arrange
+        var sportEvent = new SportEvent("Event Name", SportType.FOOTBALL, SportEventStatus.INACTIVE, LocalDateTime.now().plusHours(1));
+        sportEvent.setId(1L);
+        var updatedEvent = new SportEventDTO(1L, "Event Name", SportType.FOOTBALL, SportEventStatus.ACTIVE, sportEvent.getStartTime());
+
+        Mockito.when(sportEventService.changeEventStatus(1L, SportEventStatus.ACTIVE)).thenReturn(updatedEvent);
+
+        // Act & Assert
+        mockMvc.perform(patch("/sport-events/{id}/status", 1L)
+                        .param("newStatus", "ACTIVE"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(1)))
+                .andExpect(jsonPath("$.name", is("Event Name")))
+                .andExpect(jsonPath("$.sportType", is("FOOTBALL")))
+                .andExpect(jsonPath("$.eventStatus", is("ACTIVE")))
+                .andExpect(jsonPath("$.startTime").exists());
+
+        Mockito.verify(sportEventService, times(1)).changeEventStatus(1L, SportEventStatus.ACTIVE);
     }
 }

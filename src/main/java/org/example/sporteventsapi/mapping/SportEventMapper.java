@@ -9,6 +9,7 @@ import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface SportEventMapper {
+
     SportEventMapper INSTANCE = Mappers.getMapper(SportEventMapper.class);
 
     SportEvent toEntity(SportEventDTO sportEventDTO);

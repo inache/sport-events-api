@@ -16,4 +16,5 @@ public interface SportEventRepository extends JpaRepository<SportEvent, Long> {
     List<SportEvent> findAllByEventStatus(SportEventStatus status);
 
     List<SportEvent> findAllBySportType(SportType type);
+
 }

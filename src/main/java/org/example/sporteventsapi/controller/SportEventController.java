@@ -36,4 +36,10 @@ public class SportEventController {
     public ResponseEntity<SportEventDTO> createSportEvent(@Validated @RequestBody SportEventDTO sportEventDTO) {
         return ResponseEntity.status(HttpStatus.CREATED).body(this.service.createSportEvent(sportEventDTO));
     }
+
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<SportEventDTO> updateEventStatus(
+            @PathVariable Long id, @RequestParam SportEventStatus newStatus) {
+        return ResponseEntity.ok(service.changeEventStatus(id, newStatus));
+    }
 }

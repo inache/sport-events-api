@@ -3,6 +3,7 @@ package org.example.sporteventsapi.service;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import org.example.sporteventsapi.dto.SportEventDTO;
+import org.example.sporteventsapi.exception.InvalidStatusChangeException;
 import org.example.sporteventsapi.exception.NoRecordFoundException;
 import org.example.sporteventsapi.mapping.SportEventMapper;
 import org.example.sporteventsapi.model.SportEvent;
@@ -12,6 +13,7 @@ import org.example.sporteventsapi.repository.SportEventRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -49,5 +51,62 @@ public class SportEventService {
     public SportEventDTO getSportEventById(Long id) {
         var sportEvent = sportEventRepository.findById(id).orElseThrow(() -> new NoRecordFoundException(String.format("Sport event with id [%s] was not found", id)));
         return SportEventMapper.INSTANCE.toDto(sportEvent);
+    }
+
+    public SportEventDTO changeEventStatus(Long id, SportEventStatus newStatus) {
+        var now = LocalDateTime.now();
+
+        var sportEvent = sportEventRepository.findById(id)
+                .orElseThrow(() -> new NoRecordFoundException("Sport event can not be found"));
+
+        validateStatusChange(sportEvent, newStatus, now);
+
+        sportEvent.setEventStatus(newStatus);
+        sportEventRepository.save(sportEvent);
+
+        return SportEventMapper.INSTANCE.toDto(sportEvent);
+    }
+
+    private void validateStatusChange(SportEvent sportEvent, SportEventStatus newStatus, LocalDateTime now) {
+        switch (newStatus) {
+            case INACTIVE:
+                validateInactiveStatus(sportEvent);
+                break;
+            case ACTIVE:
+                validateActiveStatus(sportEvent, now);
+                break;
+            case FINISHED:
+                validateFinishedStatus(sportEvent);
+                break;
+            default:
+                throw new InvalidStatusChangeException("Invalid status change");
+        }
+    }
+
+    private void validateInactiveStatus(SportEvent sportEvent) {
+        if (sportEvent.getEventStatus() == SportEventStatus.FINISHED) {
+            throw new InvalidStatusChangeException("Cannot change status from FINISHED to INACTIVE");
+        }
+    }
+
+    private void validateActiveStatus(SportEvent sportEvent, LocalDateTime now) {
+        if (sportEvent.getEventStatus() == SportEventStatus.FINISHED) {
+            throw new InvalidStatusChangeException("Cannot change status from FINISHED to ACTIVE");
+        }
+        if (sportEvent.getEventStatus() == SportEventStatus.ACTIVE) {
+            throw new InvalidStatusChangeException("Event is already ACTIVE");
+        }
+        if (sportEvent.getStartTime().isBefore(now)) {
+            throw new InvalidStatusChangeException("Cannot activate a sports event that has already started");
+        }
+    }
+
+    private void validateFinishedStatus(SportEvent sportEvent) {
+        if (sportEvent.getEventStatus() == SportEventStatus.FINISHED) {
+            throw new InvalidStatusChangeException("Event is already FINISHED");
+        }
+        if (sportEvent.getEventStatus() == SportEventStatus.INACTIVE) {
+            throw new InvalidStatusChangeException("Cannot change status from INACTIVE to FINISHED");
+        }
     }
 }

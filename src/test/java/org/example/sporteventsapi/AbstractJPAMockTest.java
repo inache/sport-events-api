@@ -11,6 +11,7 @@ import org.springframework.test.web.servlet.MockMvc;
 @ExtendWith(SpringExtension.class)
 @WebMvcTest
 public class AbstractJPAMockTest {
+
     @Inject
     protected MockMvc mockMvc;
 
