@@ -4,8 +4,7 @@ This is what i've managed to make in one day ( there are a lot of thing to be im
   java.version:17
 
 To run the application:
-mvn clean install 
-mvn spring-boot:run
+mvn clean install / mvn spring-boot:run
 
 Endpoints examples:
 GET http://localhost:8090/api/sport-events
