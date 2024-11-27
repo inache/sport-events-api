@@ -1,11 +1,12 @@
-Sport events api.
-  This is what i've managed to make in two days after working hours ( there are things which can be improved like: better startTime validation / integration tests / validation tests . (To think about what can be improved for a lot of calls for 1 endpoint) <br/>
+Sport events api.<br/>
+ This is what i've managed to make in two days after working hours ( there are things which can be improved like: better startTime validation / integration tests / validation tests . (To think about what can be improved for a lot of calls for 1 endpoint) <br/>
 but been limited in time ).
 
-java.version:17
+Clone repo to local machine.<br/>
+Inside project dir run:
+mvn spring-boot:run
 
-To run the application:<br/>
-mvn clean install => mvn spring-boot:run
+java.version:17
 
 Endpoints examples:<br/>
 GET http://localhost:8090/api/sport-events<br/>
