@@ -39,7 +39,7 @@ public class SportEventController {
 
     @PatchMapping("/{id}/status")
     public ResponseEntity<SportEventDTO> updateEventStatus(
-            @PathVariable Long id, @RequestParam SportEventStatus newStatus) {
+            @PathVariable Long id, @Validated @RequestParam SportEventStatus newStatus) {
         return ResponseEntity.ok(service.changeEventStatus(id, newStatus));
     }
 }

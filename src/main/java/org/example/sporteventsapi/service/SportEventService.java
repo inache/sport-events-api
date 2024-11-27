@@ -49,7 +49,8 @@ public class SportEventService {
     }
 
     public SportEventDTO getSportEventById(Long id) {
-        var sportEvent = sportEventRepository.findById(id).orElseThrow(() -> new NoRecordFoundException(String.format("Sport event with id [%s] was not found", id)));
+        var sportEvent = sportEventRepository.findById(id)
+                .orElseThrow(() -> new NoRecordFoundException("Sport Event", "id", id.toString()));
         return SportEventMapper.INSTANCE.toDto(sportEvent);
     }
 
@@ -57,7 +58,7 @@ public class SportEventService {
         var now = LocalDateTime.now();
 
         var sportEvent = sportEventRepository.findById(id)
-                .orElseThrow(() -> new NoRecordFoundException("Sport event can not be found"));
+                .orElseThrow(() -> new NoRecordFoundException("Sport Event", "id", id.toString()));
 
         validateStatusChange(sportEvent, newStatus, now);
 
@@ -68,32 +69,37 @@ public class SportEventService {
     }
 
     private void validateStatusChange(SportEvent sportEvent, SportEventStatus newStatus, LocalDateTime now) {
+        if (newStatus == null) {
+            throw new InvalidStatusChangeException(sportEvent.getEventStatus(), null);
+        }
+
+        var currentStatus = sportEvent.getEventStatus();
         switch (newStatus) {
             case INACTIVE:
-                validateInactiveStatus(sportEvent);
+                validateInactiveStatus(currentStatus);
                 break;
             case ACTIVE:
-                validateActiveStatus(sportEvent, now);
+                validateActiveStatus(sportEvent, now, currentStatus);
                 break;
             case FINISHED:
-                validateFinishedStatus(sportEvent);
+                validateFinishedStatus(currentStatus);
                 break;
             default:
-                throw new InvalidStatusChangeException("Invalid status change");
+                throw new InvalidStatusChangeException(currentStatus, newStatus);
         }
     }
 
-    private void validateInactiveStatus(SportEvent sportEvent) {
-        if (sportEvent.getEventStatus() == SportEventStatus.FINISHED) {
-            throw new InvalidStatusChangeException("Cannot change status from FINISHED to INACTIVE");
+    private void validateInactiveStatus(SportEventStatus currentStatus) {
+        if (currentStatus == SportEventStatus.FINISHED) {
+            throw new InvalidStatusChangeException(currentStatus, SportEventStatus.INACTIVE);
         }
     }
 
-    private void validateActiveStatus(SportEvent sportEvent, LocalDateTime now) {
-        if (sportEvent.getEventStatus() == SportEventStatus.FINISHED) {
-            throw new InvalidStatusChangeException("Cannot change status from FINISHED to ACTIVE");
+    private void validateActiveStatus(SportEvent sportEvent, LocalDateTime now, SportEventStatus currentStatus) {
+        if (currentStatus == SportEventStatus.FINISHED) {
+            throw new InvalidStatusChangeException(currentStatus, SportEventStatus.ACTIVE);
         }
-        if (sportEvent.getEventStatus() == SportEventStatus.ACTIVE) {
+        if (currentStatus == SportEventStatus.ACTIVE) {
             throw new InvalidStatusChangeException("Event is already ACTIVE");
         }
         if (sportEvent.getStartTime().isBefore(now)) {
@@ -101,12 +107,12 @@ public class SportEventService {
         }
     }
 
-    private void validateFinishedStatus(SportEvent sportEvent) {
-        if (sportEvent.getEventStatus() == SportEventStatus.FINISHED) {
+    private void validateFinishedStatus(SportEventStatus currentStatus) {
+        if (currentStatus == SportEventStatus.FINISHED) {
             throw new InvalidStatusChangeException("Event is already FINISHED");
         }
-        if (sportEvent.getEventStatus() == SportEventStatus.INACTIVE) {
-            throw new InvalidStatusChangeException("Cannot change status from INACTIVE to FINISHED");
+        if (currentStatus == SportEventStatus.INACTIVE) {
+            throw new InvalidStatusChangeException(currentStatus, SportEventStatus.FINISHED);
         }
     }
 }

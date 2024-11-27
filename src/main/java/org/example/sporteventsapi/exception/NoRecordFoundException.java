@@ -1,11 +1,10 @@
 package org.example.sporteventsapi.exception;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
 
-@ResponseStatus(HttpStatus.NOT_FOUND)
-public class NoRecordFoundException extends RuntimeException {
-    public NoRecordFoundException(String message) {
-        super(message);
+public class NoRecordFoundException extends ApiException {
+    public NoRecordFoundException(String resourceName, String fieldName, Object fieldValue) {
+        super(String.format("No %s was found by %s with value '%s'", resourceName, fieldName, fieldValue),
+                HttpStatus.NOT_FOUND);
     }
 }

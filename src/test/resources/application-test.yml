@@ -1,8 +1,0 @@
-logging:
-  level:
-    org.springframework.web.method.annotation.MethodArgumentTypeMismatchException: WARN
-    org.springframework.web.method.annotation.AbstractNamedValueMethodArgumentResolver: WARN
-    org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter: WARN
-    org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver: WARN
-    org.springframework.web.servlet.DispatcherServlet: WARN
-    org.example.sporteventsapi: ERROR

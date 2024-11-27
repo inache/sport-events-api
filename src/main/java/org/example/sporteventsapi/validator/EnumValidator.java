@@ -1,23 +1,28 @@
 package org.example.sporteventsapi.validator;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
-import java.util.Arrays;
-import java.util.Set;
-import java.util.stream.Collectors;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 
-public class EnumValidator implements ConstraintValidator<ValidEnum, String> {
-    private Set<String> validValues;
+import java.util.Arrays;
+
+public class EnumValidator implements ConstraintValidator<ValidEnum, Object> {
+
+    private Class<? extends Enum<?>> enumClass;
 
     @Override
-    public void initialize(ValidEnum constraintAnnotation) {
-        validValues = Arrays.stream(constraintAnnotation.enumClass().getEnumConstants())
-                .map(Enum::name)
-                .collect(Collectors.toSet());
+    public void initialize(ValidEnum annotation) {
+        this.enumClass = annotation.enumClass();
     }
 
     @Override
-    public boolean isValid(String value, ConstraintValidatorContext context) {
-        return value == null || validValues.contains(value);
+    public boolean isValid(Object value, ConstraintValidatorContext context) {
+        if (value == null) {
+            return true;
+        }
+
+        if (value instanceof String) {
+            return Arrays.stream(enumClass.getEnumConstants())
+                    .anyMatch(enumConstant -> enumConstant.name().equals(value));
+        } else return enumClass.isInstance(value);
     }
 }
